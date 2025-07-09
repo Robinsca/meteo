@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previsioni Meteo Città Italiane</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-dark: #0056b3;
+            --text-color: #333;
+            --border-color: #ddd;
+            --bg-light: #C3E6CB; /* Verde salvia chiaro */
+            --shadow-light: rgba(0,0,0,0.08);
+            --error-color: #dc3545;
+            --button-hover-bg: #0056b3; /* Colore per l'hover del bottone */
+            --button-hover-shadow: rgba(0,0,0,0.15); /* Ombra per l'hover del bottone */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-light);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: white;
+            max-width: 900px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px var(--shadow-light);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 30px;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 600px) {
+            .controls {
+                flex-direction: row;
+            }
+        }
+
+        select, button {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease; /* Transizione per tutti gli stati */
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        select:focus, button:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            border: none;
+            font-weight: 500;
+            /* Aggiunta transizione specifica per background e shadow */
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Effetto Hover per il bottone */
+        button:hover {
+            background-color: var(--button-hover-bg); /* Colore più scuro all'hover */
+            transform: translateY(-2px); /* Sposta leggermente il bottone verso l'alto */
+            box-shadow: 0 6px 15px var(--button-hover-shadow); /* Ombra più pronunciata */
+        }
+
+        canvas {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .message-box {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            color: var(--text-color);
+            background-color: #e9f7fe;
+            border: 1px solid #b3e0ff;
+            display: none;
+        }
+
+        .message-box.loading {
+            color: var(--primary-dark);
+            background-color: #e0f7fa;
+            border-color: #b2ebf2;
+        }
+
+        .message-box.error {
+            color: var(--error-color);
+            background-color: #ffebee;
+            border-color: #ffcdd2;
+        }
+
+        .placeholder-message {
+            text-align: center;
+            color: #666;
+            margin-top: 50px;
+            font-size: 1.2em;
+            padding: 20px;
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Previsioni Meteo Settimanali</h1>
+
+        <div class="controls">
+            <select id="citySelect">
+                <option value="">Seleziona una città</option>
+                <option value="45.0703,7.6868">Torino</option>
+                <option value="41.9028,12.4964">Roma</option>
+                <option value="45.4642,9.1900">Milano</option>
+                <option value="40.8518,14.2681">Napoli</option>
+                <option value="43.7696,11.2558">Firenze</option>
+            </select>
+            <button id="getWeatherBtn">Ottieni Previsioni</button>
+        </div>
+
+        <div id="loading" class="message-box loading">Caricamento delle previsioni...</div>
+        <div id="error" class="message-box error"></div>
+
+        <div id="initialMessage" class="placeholder-message">
+            Seleziona una città dal menu a discesa e clicca su "Ottieni Previsioni" per visualizzare il grafico.
+        </div>
+        
+        <canvas id="weatherChart" style="display: none;"></canvas>
+    </div>
+
+    <script>
+        const citySelect = document.getElementById('citySelect');
+        const getWeatherBtn = document.getElementById('getWeatherBtn');
+        const weatherChartCanvas = document.getElementById('weatherChart');
+        const loadingDiv = document.getElementById('loading');
+        const errorDiv = document.getElementById('error');
+        const initialMessageDiv = document.getElementById('initialMessage');
+        let weatherChart;
+
+        weatherChartCanvas.style.display = 'none';
+        initialMessageDiv.style.display = 'block';
+
+        getWeatherBtn.addEventListener('click', fetchWeather);
+
+        async function fetchWeather() {
+            const selectedCity = citySelect.value;
+            if (!selectedCity) {
+                errorDiv.textContent = 'Per favore, seleziona una città.';
+                errorDiv.style.display = 'block';
+                loadingDiv.style.display = 'none';
+                weatherChartCanvas.style.display = 'none';
+                initialMessageDiv.style.display = 'none';
+                return;
+            }
+
+            const [lat, lon] = selectedCity.split(',');
+            
+            loadingDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+            initialMessageDiv.style.display = 'none'; 
+            weatherChartCanvas.style.display = 'none';
+
+            try {
+                // Ricorda di sostituire con il tuo endpoint API se ne hai uno!
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=Europe%2FBerlin`);
+
+                if (!response.ok) {
+                    throw new Error(`Errore HTTP! Stato: ${response.status}`);
+                }
+                const data = await response.json();
+                displayChart(data);
+                weatherChartCanvas.style.display = 'block';
+            } catch (error) {
+                console.error('Errore durante il recupero dei dati:', error);
+                errorDiv.textContent = `Impossibile caricare le previsioni: ${error.message}. Riprova più tardi.`;
+                errorDiv.style.display = 'block';
+                weatherChartCanvas.style.display = 'none';
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function displayChart(data) {
+            const dates = data.daily.time.map(date => new Date(date).toLocaleDateString('it-IT', { weekday: 'short', month: 'numeric', day: 'numeric' }));
+            const maxTemps = data.daily.temperature_2m_max;
+            const minTemps = data.daily.temperature_2m_min;
+
+            if (weatherChart) {
+                weatherChart.destroy();
+            }
+
+            weatherChart = new Chart(weatherChartCanvas, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Temperatura Max (°C)',
+                            data: maxTemps,
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            tension: 0.4,
+                            fill: false,
+                            pointBackgroundColor: 'rgb(255, 99, 132)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(255, 99, 132)',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: 'Temperatura Min (°C)',
+                            data: minTemps,
+                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            tension: 0.4,
+                            fill: false,
+                            pointBackgroundColor: 'rgb(54, 162, 235)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(54, 162, 235)',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Previsioni Temperature Settimanali',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + '°C';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Temperatura (°C)',
+                                font: {
+                                    size: 14
+                                }
+                            },
+                            grid: {
+                                color: '#f0f0f0'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Data',
+                                font: {
+                                    size: 14
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
