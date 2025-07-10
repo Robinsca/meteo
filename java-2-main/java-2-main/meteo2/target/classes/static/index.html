@@ -99,13 +99,26 @@
         }
 
         canvas {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-top: 20px;
-            background-color: #fff;
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-top: 20px;
+        background-color: #fff;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        /* AGGIUNGI O MODIFICA QUESTE PROPRIETÀ */
+        max-height: 400px; /* Imposta un'altezza massima, ad esempio 400px */
+        width: 100%; /* Assicurati che occupi tutta la larghezza disponibile */
+        height: auto; /* Permetti all'altezza di adattarsi mantenendo le proporzioni */
+        display: none; /* Mantienilo nascosto inizialmente */
+    }
+     /* Potresti voler incapsulare il canvas in un div per un controllo ancora migliore */
+    .chart-container {
+        position: relative; /* Necessario se vuoi che il canvas si adatti al container */
+        height: 400px; /* Altezza fissa del container */
+        width: 100%;
+        margin-top: 20px; /* Spazio dal bordo superiore */
+    }
+   
 
         .message-box {
             text-align: center;
