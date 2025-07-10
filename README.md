@@ -15,8 +15,7 @@ Frontend: [meteo2/src/main/resources/static/index.html](meteo2/src/main/resource
 <<<<<<< HEAD
 Backend: Java Spring Boot ([com.robinsca.openmeteo](meteo2/src/main/java/com/robinsca/openmeteo/))
 =======
-Backend: Java Spring Boot ([com.perno.openmeteo](meteo2/src/main/java/com/robinsca/openmeteo/))
->>>>>>> 743261a1cf4e3323865995d3d4656e0fac06aaa6
+
 
 Configurazione: [application.properties](meteo2/src/main/resources/application.properties)
 
