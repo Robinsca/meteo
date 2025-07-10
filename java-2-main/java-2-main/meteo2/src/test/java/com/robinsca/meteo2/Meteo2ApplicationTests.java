@@ -1,4 +1,4 @@
-package com.perno.meteo2;
+package com.robinsca.meteo2;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

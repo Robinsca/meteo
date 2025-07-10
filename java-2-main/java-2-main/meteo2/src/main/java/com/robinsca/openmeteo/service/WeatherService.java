@@ -1,9 +1,10 @@
-package com.perno.openmeteo.service;
+package com.robinsca.openmeteo.service;
 
-import com.perno.openmeteo.model.OpenMeteoResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import com.robinsca.openmeteo.model.OpenMeteoResponse;
 
 @Service
 public class WeatherService {

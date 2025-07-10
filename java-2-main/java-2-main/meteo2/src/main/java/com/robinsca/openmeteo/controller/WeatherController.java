@@ -1,11 +1,12 @@
-package com.perno.openmeteo.controller;
+package com.robinsca.openmeteo.controller;
 
-import com.perno.openmeteo.model.OpenMeteoResponse;
-import com.perno.openmeteo.service.WeatherService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.robinsca.openmeteo.model.OpenMeteoResponse;
+import com.robinsca.openmeteo.service.WeatherService;
 
 
 @RestController

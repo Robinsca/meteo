@@ -1,4 +1,4 @@
-package com.perno.openmeteo;
+package com.robinsca.openmeteo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

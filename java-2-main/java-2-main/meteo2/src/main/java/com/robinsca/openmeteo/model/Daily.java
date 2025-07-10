@@ -1,4 +1,4 @@
-package com.perno.openmeteo.model;
+package com.robinsca.openmeteo.model;
 
 import lombok.Data;
 import java.util.List;
