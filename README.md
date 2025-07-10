@@ -12,7 +12,7 @@ Backend Java Spring Boot che funge da proxy verso l'API Open-Meteo.
 
 Frontend: [meteo2/src/main/resources/static/index.html](meteo2/src/main/resources/static/index.html)
 
-Backend: Java Spring Boot ([com.perno.openmeteo](meteo2/src/main/java/com/robinsca/openmeteo/))
+Backend: Java Spring Boot ([com.robinsca.openmeteo](meteo2/src/main/java/com/robinsca/openmeteo/))
 
 Configurazione: [application.properties](meteo2/src/main/resources/application.properties)
 

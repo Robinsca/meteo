@@ -8,7 +8,7 @@
 		<version>3.5.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.perno</groupId>
+	<groupId>com.robinsca</groupId>
 	<artifactId>open-meteo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>open-meteo</name>
