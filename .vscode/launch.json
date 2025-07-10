@@ -9,6 +9,16 @@
             "projectName": "open-meteo",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-OpenMeteoApplication<open-meteo>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.robinsca.openmeteo.OpenMeteoApplication",
+            "projectName": "open-meteo",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
